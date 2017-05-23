@@ -7,9 +7,11 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
@@ -228,6 +230,8 @@ public class ArcMenu extends ViewGroup implements View.OnClickListener {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getContext(), "===" + position, Toast.LENGTH_SHORT).show();
+                    menuItem(position);
+                    switchStatus();
                 }
             });
         }
@@ -240,5 +244,98 @@ public class ArcMenu extends ViewGroup implements View.OnClickListener {
         } else {
             curStatus = Status.STATUS_CLOSE;
         }
+    }
+
+    /**
+     * 对item的点击事件处理
+     */
+    private void menuItem(int position) {
+        int count = getChildCount();
+        for (int i = 0; i < count - 1; i++) {
+            View child = getChildAt(i + 1);
+            if (position == i + 1) {//当前点击的item
+                setScaleBig(child, 300);
+            } else {
+                setScaleSmall(child, 300);
+            }
+        }
+    }
+
+    /**
+     * 放大再消失
+     *
+     * @param view
+     * @param duration
+     */
+    private void setScaleBig(final View view, int duration) {
+        ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 2.0f, 1.0f, 2.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        scaleAnimation.setDuration(duration);
+        scaleAnimation.setFillAfter(true);
+        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.clearAnimation();
+                view.setVisibility(GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+        alphaAnimation.setDuration(duration);
+        alphaAnimation.setFillAfter(true);
+
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(scaleAnimation);
+        set.addAnimation(alphaAnimation);
+        view.startAnimation(set);
+    }
+
+    /**
+     * 缩小再消失
+     *
+     * @param view
+     * @param duration
+     */
+    private void setScaleSmall(final View view, int duration) {
+        ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 0.0f, 1.0f, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        scaleAnimation.setDuration(duration);
+        scaleAnimation.setFillAfter(true);
+        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.clearAnimation();
+                view.setVisibility(GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+        alphaAnimation.setDuration(duration);
+        alphaAnimation.setFillAfter(true);
+
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(scaleAnimation);
+        set.addAnimation(alphaAnimation);
+        view.startAnimation(set);
     }
 }
